@@ -1,0 +1,7 @@
+{
+  "name": "Restart",
+  "description": "A minimalist industrial B2B recycling marketplace for a cleaner future.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
