@@ -12,11 +12,12 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { supabase } from "../services/supabase";
-import { useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
-  const navigate = useNavigate();
+interface LoginProps {
+  onLogin: (role: "buyer" | "seller") => void;
+}
 
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [role, setRole] = useState<"buyer" | "seller">("seller");
   const [showPass, setShowPass] = useState(false);
@@ -50,15 +51,18 @@ const Login: React.FC = () => {
           return;
         }
 
-        navigate("/dashboard");
+        // ✅ SUCCESS
+        onLogin(role);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+
         if (error) throw error;
 
-        navigate("/dashboard");
+        // ✅ SUCCESS
+        onLogin(role);
       }
     } catch (err: any) {
       setErrorMsg(err.message || "Authentication failed");
@@ -72,14 +76,10 @@ const Login: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass w-full max-w-md p-10 md:p-14 rounded-[3.5rem] relative z-10 shadow-2xl border border-white/40"
+        className="glass w-full max-w-md p-10 md:p-14 rounded-[3.5rem] shadow-2xl border border-white/40"
       >
-        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-emerald-950 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-xl">
-          Login
-        </div>
-
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-emerald-500 mb-6 shadow-sm border">
+          <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-emerald-500 mb-6">
             <Leaf size={32} />
           </div>
           <h2 className="font-display text-3xl tracking-tight text-emerald-950 text-center">
@@ -133,37 +133,34 @@ const Login: React.FC = () => {
             </button>
           </div>
 
-          <div className="space-y-8">
-            <input
-              type="email"
-              required
-              placeholder="Email"
-              className="w-full border-b py-3 focus:outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <input
+            type="email"
+            required
+            placeholder="Email"
+            className="w-full border-b py-3 focus:outline-none"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-            <div className="relative">
-              <input
-                type={showPass ? "text" : "password"}
-                required
-                placeholder="Password"
-                className="w-full border-b py-3 focus:outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-0 top-3 text-slate-400"
-              >
-                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
+          <div className="relative">
+            <input
+              type={showPass ? "text" : "password"}
+              required
+              placeholder="Password"
+              className="w-full border-b py-3 focus:outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute right-0 top-3 text-slate-400"
+            >
+              {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
           </div>
 
           <button
-            type="submit"
             disabled={isLoading}
             className="w-full bg-emerald-600 text-white rounded-full py-5 uppercase tracking-widest font-bold flex justify-center gap-2"
           >
