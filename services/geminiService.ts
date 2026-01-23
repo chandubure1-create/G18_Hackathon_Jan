@@ -6,7 +6,8 @@ export async function analyzeMaterial(base64Image: string) {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    // Using gemini-3-pro-preview for complex reasoning vision task
+    model: 'gemini-3-pro-preview',
     contents: {
       parts: [
         {
@@ -43,6 +44,7 @@ export async function analyzeMaterial(base64Image: string) {
     }
   });
 
-  // Access .text directly from response
-  return JSON.parse(response.text || '{}');
+  // Access .text directly from response as a getter
+  const textOutput = response.text;
+  return JSON.parse(textOutput || '{}');
 }
